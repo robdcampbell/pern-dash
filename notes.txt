@@ -1,0 +1,31 @@
+
+GENERAL NOTES
+
+## FRONTEND: 
+
+- Resource: Logo: Figma
+- Resource: Images: Undraw.co
+
+Styled Components
+- Styled Components are kept in src/assets/wrappers
+- Each directory has an default export file with all the folder contents (Components)
+
+
+
+
+// Continue with local storage, reasearch additional options as well
+- httpOnly Cookies with JWT: https://www.youtube.com/watch?v=894seNhONF8
+
+// Bearer Token next. 
+
+
+
+/// AFTER COMPLETION: 
+
+    - ADAPT FOR P.E.R.N. stack
+        - a) sequelize (db, aggregate, etc...)
+        - b) 
+    - Change into Project/Help Disk Dash
+ - 1) Admin users
+ - 2) Admin users control panel 
+ - 3) Password email reset
