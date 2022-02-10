@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to this P.E.R.N. Stack Dashboard" });
 });
 
+/// *** REFACTOR HERE NEXT !!!
 // app.use("/api/v1/auth", authRouter);
 require("./app/routes/tutorial.routes")(app);
 
