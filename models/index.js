@@ -1,6 +1,7 @@
-const dbConfig = require("../config/db.config.js");
+import dbConfig from "../db/db.config.js";
 
-const { Sequelize, DataTypes } = require("sequelize");
+import { Sequelize, DataTypes } from "sequelize";
+
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
@@ -19,6 +20,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.DataTypes = DataTypes;
 
-db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize, DataTypes);
+// db.tutorials = require("./tutorial.model.cjs")(sequelize, Sequelize, DataTypes);
 
-module.exports = db;
+export default db;
