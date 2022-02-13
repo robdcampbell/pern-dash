@@ -31,6 +31,10 @@ app.get("/", (req, res) => {
 /// *** REFACTOR HERE NEXT !!!
 // app.use("/api/v1/auth", authRouter);
 require("./app/routes/tutorial.routes")(app);
+app.use("/api/v1/tutorials", authRouter);
+// ROUTES ////////////////////////
+// app.use("/api/v1/auth", authRouter);
+// app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
