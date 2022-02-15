@@ -1,43 +1,50 @@
 import express from "express";
-
-import cors from "cors";
-
 const app = express();
+const PORT = process.env.PORT || 5000;
+import morgan from "morgan";
+import sequelize from "./db/db.js";
+import dotenv from "dotenv";
+dotenv.config();
+import authRouter from "./routes/authRoutes.js";
 
-var corsOptions = {
-  origin: "http://localhost:8081",
-};
-
-app.use(cors(corsOptions));
-
-// parse requests of content-type - application/json
+// Middleware.
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
 app.use(express.json());
 
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
-
-import db from "./models/index.js";
-db.sequelize.sync();
-// // drop the table if it already exists
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and re-sync db.");
-// });
-
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to this P.E.R.N. Stack Dashboard" });
-});
-
-/// *** REFACTOR HERE NEXT !!!
-// app.use("/api/v1/auth", authRouter);
-require("./app/routes/tutorial.routes")(app);
-app.use("/api/v1/tutorials", authRouter);
 // ROUTES ////////////////////////
-// app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/auth", authRouter);
 // app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
-// set port, listen for requests
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+// TEST ROUTE
+// app.use("/users", UserRoutes);
+
+// test route
+app.get("/", async (req, res) => {
+  res.json({ msg: `App listenting on port: ${PORT}` });
 });
+
+// DB Connect, Server Start ////////////////////////
+
+const start = async () => {
+  try {
+    app.listen(PORT, (req, res) => {
+      //
+      console.log(`App listenting on port: ${PORT}`);
+      // once in place, use sequelize.authenticate()
+      sequelize
+        .sync()
+        .then(() => {
+          console.log("Connection has been established successfully.");
+        })
+        .catch((err) => {
+          console.error("Unable to connect to the database:", err);
+        });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+start();

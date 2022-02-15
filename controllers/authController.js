@@ -7,14 +7,25 @@ const register = async (req, res, next) => {
   if (!name || !email || !password) {
     throw new BadRequestError("Please provide all values");
   }
-  const userAlreadyExists = await User.findOne({ email });
+  const userAlreadyExists = await User.findOne({
+    where: {
+      email,
+    },
+  });
+
+  console.log(userAlreadyExists);
+
   if (userAlreadyExists) {
     throw new BadRequestError("Email already in use");
   }
-  // Mongoose, create new user with UserSchema
+
+  // Sequelize, create new user with UserSchema
   const user = await User.create({ name, email, password });
+
   // JWT creation
-  const token = user.createJWT();
+  //    const token = user.createJWT();
+  const token = "token";
+
   // Hardcoding the user detail so the pass doesn't get sent clientside
   res.status(StatusCodes.CREATED).json({
     user: {
@@ -27,44 +38,96 @@ const register = async (req, res, next) => {
   });
 };
 
+// LOGIN //////////////////////////////////
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new BadRequestError("Please provide all values.");
-  }
-  const user = await User.findOne({ email }).select("+password");
-  if (!user) {
-    throw new UnAuthenticatedError("Invalid Credentials");
-  }
-
-  const isPasswordCorrect = await user.comparePassword(password);
-  if (!isPasswordCorrect) {
-    throw new UnAuthenticatedError("Invalid Credentials");
-  }
-  const token = user.createJWT();
-  user.password = undefined;
-  res.status(StatusCodes.OK).json({ user, token, location: user.location });
-
-  // res.send("login user");
+  console.log("login user");
 };
 
-const updateUser = async (req, res) => {
-  const { email, name, lastName, location } = req.body;
-  if (!email || !name || !lastName || !location) {
-    throw new BadRequestError("Please provide all values");
+// UPDATE //////////////////////////////////
+const updateUser = (req, res) => {
+  console.log("update user");
+};
+/////////////////////////////////////////////
+// Create User
+const createUser = async (req, res) => {
+  const { name, email, role, password } = req.body;
+  try {
+    // find one to validate unique email address
+    const currUser = await User.findOne({
+      where: {
+        email,
+      },
+    });
+    if (currUser) {
+      res.status(202).json({ msg: "User Already Exists!" });
+    } else {
+      const newUser = await User.create({ name, email, role });
+      res.status(200).json({ newUser });
+    }
+  } catch (err) {
+    console.log(err);
   }
-  const user = await User.findOne({ _id: req.user.userId });
-
-  user.email = email;
-  user.name = name;
-  user.lastName = lastName;
-  user.location = location;
-
-  await user.save();
-
-  const token = user.createJWT();
-
-  res.status(StatusCodes.OK).json({ user, token, location: user.location });
 };
 
-export { register, login, updateUser };
+// GET ALL USERS
+const getAllUsers = async (req, res) => {
+  console.log("get all users");
+  try {
+    const users = await User.findAll();
+    res.status(200).json(users);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// GET SPECIFIC USER
+const getUser = async (req, res) => {
+  console.log("get specific user");
+  const uuid = req.params.uuid;
+
+  try {
+    const user = await User.findOne({
+      where: {
+        uuid,
+      },
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Something went wrong." });
+  }
+};
+
+// UPDATE SPECIFIC USER
+// const updateUser = async (req, res) => {
+//   console.log("update user");
+// };
+
+// DELETE A USER
+const deleteUser = async (req, res) => {
+  console.log("delete user");
+
+  const uuid = req.params.uuid;
+  try {
+    let deletedata = await User.destroy({
+      where: {
+        uuid,
+      },
+    });
+    if (deletedata) {
+      res.status(200).json({
+        success: true,
+        msg: "User Deleted Successfully",
+        data: deletedata,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong!",
+    });
+  }
+};
+
+export { register, login, getUser, getAllUsers, deleteUser, updateUser };
