@@ -23,8 +23,7 @@ const register = async (req, res, next) => {
   const user = await User.create({ name, email, password });
 
   // JWT creation
-  //    const token = user.createJWT();
-  const token = "token";
+  const token = user.createJWT();
 
   // Hardcoding the user detail so the pass doesn't get sent clientside
   res.status(StatusCodes.CREATED).json({
