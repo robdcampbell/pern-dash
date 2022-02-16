@@ -1,8 +1,9 @@
-import Sequelize from "sequelize";
-import { DataTypes } from "sequelize";
+import { Sequelize, DataTypes, Model } from "sequelize";
 import sequelize from "../db/db.js";
 
 // prevent UUID and ID being sent in response.
+
+// class User extends Model {}
 
 const User = sequelize.define(
   "users",
@@ -56,3 +57,28 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 export default User;
+
+/*
+
+class User extends Model {
+  static classLevelMethod() {
+    return 'foo';
+  }
+  instanceLevelMethod() {
+    return 'bar';
+  }
+  getFullname() {
+    return [this.firstname, this.lastname].join(' ');
+  }
+}
+User.init({
+  firstname: Sequelize.TEXT,
+  lastname: Sequelize.TEXT
+}, { sequelize });
+
+console.log(User.classLevelMethod()); // 'foo'
+const user = User.build({ firstname: 'Jane', lastname: 'Doe' });
+console.log(user.instanceLevelMethod()); // 'bar'
+console.log(user.getFullname()); // 'Jane Doe'
+
+*/
