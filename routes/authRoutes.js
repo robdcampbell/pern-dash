@@ -15,9 +15,11 @@ import {
   login,
   getAllUsers,
   updateUser,
+  deleteUser,
 } from "../controllers/authController.js";
 
 router.route("/users").get(getAllUsers);
+router.route("/users/:uuid").delete(deleteUser);
 router.route("/register").post(apiLimiter, register);
 router.route("/login").post(apiLimiter, login);
 router.route("/updateUser").patch(authenticateUser, updateUser);

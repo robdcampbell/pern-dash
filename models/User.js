@@ -1,13 +1,19 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
 import sequelize from "../db/db.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // prevent UUID and ID being sent in response.
 
-// class User extends Model {}
+class User extends Model {
+  static testReturn() {
+    return "Users: PTERODACTYLSSSS";
+  }
+}
 
-const User = sequelize.define(
-  "users",
+User.init(
   {
+    // Model attributes are defined here
     uuid: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -24,29 +30,32 @@ const User = sequelize.define(
       default: "standard",
     },
     password: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
   },
   {
-    timestamps: false,
+    // Other model options go here
+    sequelize, // We need to pass the connection instance
+    modelName: "user", // We need to choose the model name
   }
 );
+
+// https://sequelize.org/v6/manual/hooks.html
+
+// RC - Hash Password using Sequelize beforeCreate()
+User.beforeCreate(async (user, options) => {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(user.password, salt);
+  user.password = hashedPassword;
+});
+
+// RC - Compare password!
 
 // HERE: http://sequelize.org/master/manual/model-basics.html#taking-advantage-of-models-being-classes
 
 // HERE HERE HERE
 /*
 
-// Middlware - HashPass
-UserSchema.pre("save", async function () {
-  // console.log(this.password)
-  //// returns value that are being modified during save/update PATCHes
-  //console.log(this.modifiedPaths());
-  if (!this.isModified("password")) return;
-
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
 // Add JWT creation method to UserSchema
 UserSchema.methods.createJWT = function () {
   return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
@@ -62,28 +71,3 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 */
 
 export default User;
-
-/*
-
-class User extends Model {
-  static classLevelMethod() {
-    return 'foo';
-  }
-  instanceLevelMethod() {
-    return 'bar';
-  }
-  getFullname() {
-    return [this.firstname, this.lastname].join(' ');
-  }
-}
-User.init({
-  firstname: Sequelize.TEXT,
-  lastname: Sequelize.TEXT
-}, { sequelize });
-
-console.log(User.classLevelMethod()); // 'foo'
-const user = User.build({ firstname: 'Jane', lastname: 'Doe' });
-console.log(user.instanceLevelMethod()); // 'bar'
-console.log(user.getFullname()); // 'Jane Doe'
-
-*/

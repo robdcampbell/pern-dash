@@ -15,6 +15,8 @@ const register = async (req, res, next) => {
     },
   });
 
+  console.log(User.testReturn());
+
   console.log(userAlreadyExists);
 
   if (userAlreadyExists) {
@@ -113,6 +115,7 @@ const deleteUser = async (req, res) => {
   console.log("delete user");
 
   const uuid = req.params.uuid;
+
   try {
     let deletedata = await User.destroy({
       where: {
