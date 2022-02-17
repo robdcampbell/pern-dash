@@ -34,6 +34,9 @@ const User = sequelize.define(
 
 // HERE: http://sequelize.org/master/manual/model-basics.html#taking-advantage-of-models-being-classes
 
+// HERE HERE HERE
+/*
+
 // Middlware - HashPass
 UserSchema.pre("save", async function () {
   // console.log(this.password)
@@ -55,6 +58,8 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   const isMatch = await bcrypt.compare(candidatePassword, this.password);
   return isMatch;
 };
+// HERE HERE HERE
+*/
 
 export default User;
 

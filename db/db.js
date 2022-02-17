@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: `${__dirname}/../.env` });
-console.log(process.env.NODE_ENV);
+// console.log(process.env.NODE_ENV);
 // end fix
 
 const env = process.env.NODE_ENV || "development";

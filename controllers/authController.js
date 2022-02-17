@@ -5,7 +5,9 @@ import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 const register = async (req, res, next) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
-    throw new BadRequestError("Please provide all values");
+    // throw new BadRequestError("Please provide all values"); // Crahses Node
+    res.status(400).json({ msg: "Please provide all values" });
+    return;
   }
   const userAlreadyExists = await User.findOne({
     where: {
@@ -16,14 +18,17 @@ const register = async (req, res, next) => {
   console.log(userAlreadyExists);
 
   if (userAlreadyExists) {
-    throw new BadRequestError("Email already in use");
+    //throw new BadRequestError("Email already in use"); // Crashes node!
+    res.status(409).json({ msg: "Email already in use" });
+    return;
   }
 
   // Sequelize, create new user with UserSchema
   const user = await User.create({ name, email, password });
 
   // JWT creation
-  const token = user.createJWT();
+  // const token = user.createJWT();
+  const token = "12345678";
 
   // Hardcoding the user detail so the pass doesn't get sent clientside
   res.status(StatusCodes.CREATED).json({

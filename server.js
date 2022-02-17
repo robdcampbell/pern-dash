@@ -6,12 +6,16 @@ import sequelize from "./db/db.js";
 import dotenv from "dotenv";
 dotenv.config();
 import authRouter from "./routes/authRoutes.js";
+import notFoundMiddleware from "./middleware/not-found.js";
+import errorHandlerMiddleware from "./middleware/error-handler.js";
 
 // Middleware.
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 app.use(express.json());
+// app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 // ROUTES ////////////////////////
 app.use("/api/v1/auth", authRouter);
