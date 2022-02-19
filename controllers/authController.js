@@ -15,10 +15,6 @@ const register = async (req, res, next) => {
     },
   });
 
-  console.log(User.testReturn());
-
-  console.log(userAlreadyExists);
-
   if (userAlreadyExists) {
     //throw new BadRequestError("Email already in use"); // Crashes node!
     res.status(409).json({ msg: "Email already in use" });
@@ -30,7 +26,6 @@ const register = async (req, res, next) => {
 
   // JWT creation
   const token = User.createJWT();
-  // const token = "12345678";
 
   // Hardcoding the user detail so the pass doesn't get sent clientside
   res.status(StatusCodes.CREATED).json({
@@ -46,9 +41,34 @@ const register = async (req, res, next) => {
 
 // LOGIN //////////////////////////////////
 const login = async (req, res) => {
-  console.log("login user");
-};
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new BadRequestError("Please provide all values.");
+  }
+  const user = await User.findOne({
+    where: {
+      email,
+    },
+  });
 
+  if (!user) {
+    throw new UnAuthenticatedError("Invalid Credentials");
+  }
+  console.log(user.password);
+
+  const isPasswordCorrect = User.comparePassword(user.password);
+
+  console.log(isPasswordCorrect);
+
+  // if (!isPasswordCorrect) {
+  //   throw new UnAuthenticatedError("Invalid Credentials");
+  // }
+  // const token = User.createJWT();
+  // user.password = undefined;
+  // res.status(StatusCodes.OK).json({ user, token });
+
+  res.send("login user");
+};
 // UPDATE //////////////////////////////////
 const updateUser = (req, res) => {
   console.log("update user");
