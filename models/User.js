@@ -9,6 +9,12 @@ class User extends Model {
   static testReturn() {
     return "Users: PTERODACTYLSSSS";
   }
+  static createJWT() {
+    return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
+      expiresIn: `${process.env.JWT_LIFETIME}`,
+    });
+    // return "JWT-Token-Test";
+  }
 }
 
 User.init(
@@ -54,20 +60,23 @@ User.beforeCreate(async (user, options) => {
 // HERE: http://sequelize.org/master/manual/model-basics.html#taking-advantage-of-models-being-classes
 
 // HERE HERE HERE
-/*
 
 // Add JWT creation method to UserSchema
+/*
 UserSchema.methods.createJWT = function () {
   return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
     expiresIn: `${process.env.JWT_LIFETIME}`,
   });
 };
+*/
+
 // Add password comparison method to UserSchema
+/*
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   const isMatch = await bcrypt.compare(candidatePassword, this.password);
   return isMatch;
 };
-// HERE HERE HERE
 */
+// HERE HERE HERE
 
 export default User;

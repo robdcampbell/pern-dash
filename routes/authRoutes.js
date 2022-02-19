@@ -13,13 +13,14 @@ import authenticateUser from "../middleware/auth.js";
 import {
   register,
   login,
+  getUser,
   getAllUsers,
   updateUser,
   deleteUser,
 } from "../controllers/authController.js";
 
 router.route("/users").get(getAllUsers);
-router.route("/users/:uuid").delete(deleteUser);
+router.route("/users/:uuid").delete(deleteUser).get(getUser);
 router.route("/register").post(apiLimiter, register);
 router.route("/login").post(apiLimiter, login);
 router.route("/updateUser").patch(authenticateUser, updateUser);
