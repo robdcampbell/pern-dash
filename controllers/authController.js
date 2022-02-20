@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
+import bcrypt from "bcryptjs";
 
 const register = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -54,11 +55,20 @@ const login = async (req, res) => {
   if (!user) {
     throw new UnAuthenticatedError("Invalid Credentials");
   }
-  console.log(user.password);
+  // console.log(user.password);
+  // console.log(password);
 
-  const isPasswordCorrect = User.comparePassword(user.password);
+  const isPassword = async (pass) => {
+    const isMatch = await bcrypt.compare(pass, user.password);
+    return isMatch;
+  };
 
-  console.log(isPasswordCorrect);
+  // console.log(isPassword().then((data) => data));
+  console.log(`COMPARE : ${isPassword}`);
+
+  // FIX THIS
+  // const isPasswordCorrect = User.comparePassword(user.password);
+  res.json({ pass: user.password });
 
   // if (!isPasswordCorrect) {
   //   throw new UnAuthenticatedError("Invalid Credentials");
@@ -67,7 +77,7 @@ const login = async (req, res) => {
   // user.password = undefined;
   // res.status(StatusCodes.OK).json({ user, token });
 
-  res.send("login user");
+  //res.send("login user");
 };
 // UPDATE //////////////////////////////////
 const updateUser = (req, res) => {
