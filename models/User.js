@@ -6,9 +6,17 @@ import jwt from "jsonwebtoken";
 // prevent UUID and ID being sent in response.
 
 class User extends Model {
-  async comparePassword(candidatePassword) {
-    const isMatch = await bcrypt.compare(candidatePassword, this.password);
-    return isMatch;
+  // async comparePassword(candidatePassword) {
+  //   const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  //   return isMatch;
+  // }
+
+  correctPassword(enteredPassword, originalPassword) {
+    return new Promise((resolve) => {
+      bcrypt.compare(enteredPassword, originalPassword, (err, res) => {
+        resolve(res);
+      });
+    });
   }
 
   static createJWT() {

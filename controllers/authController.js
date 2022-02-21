@@ -46,39 +46,43 @@ const login = async (req, res) => {
   if (!email || !password) {
     throw new BadRequestError("Please provide all values.");
   }
-  const user = await User.findOne({
-    where: {
-      email,
-    },
-  });
+  // const user = await User.findOne({
+  //   where: {
+  //     email,
+  //   },
+  // });
 
-  if (!user) {
-    throw new UnAuthenticatedError("Invalid Credentials");
-  }
-  // console.log(user.password);
-  // console.log(password);
-
-  const isPassword = async (pass) => {
-    const isMatch = await bcrypt.compare(pass, user.password);
-    return isMatch;
-  };
-
-  // console.log(isPassword().then((data) => data));
-  console.log(`COMPARE : ${isPassword}`);
-
-  // FIX THIS
-  // const isPasswordCorrect = User.comparePassword(user.password);
-  res.json({ pass: user.password });
-
-  // if (!isPasswordCorrect) {
+  // if (!user) {
   //   throw new UnAuthenticatedError("Invalid Credentials");
   // }
-  // const token = User.createJWT();
-  // user.password = undefined;
-  // res.status(StatusCodes.OK).json({ user, token });
 
-  //res.send("login user");
+  try {
+    const user = await User.findOne({
+      where: {
+        email,
+      },
+    });
+
+    const authenticated = await correctPassword(password, user.password);
+    if (!authenticated) {
+      throw new UnAuthenticatedError("Invalid Credentials");
+    }
+    const token = User.createJWT();
+    user.password = undefined;
+    res.status(StatusCodes.OK).json({ user, token });
+  } catch (e) {
+    res.status(400).send(e);
+  }
 };
+
+const correctPassword = (enteredPassword, originalPassword) => {
+  return new Promise((resolve) => {
+    bcrypt.compare(enteredPassword, originalPassword, (err, res) => {
+      resolve(res);
+    });
+  });
+};
+
 // UPDATE //////////////////////////////////
 const updateUser = (req, res) => {
   console.log("update user");
